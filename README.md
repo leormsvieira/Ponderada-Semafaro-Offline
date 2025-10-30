@@ -1,129 +1,61 @@
-# Ponderada Semáforo Inteligente com Interrupção por Pedestre
+# Semáforo Offline
 
-## 1. Introdução e Fundamentação Teórica
+## 1. Objetivo
 
-O projeto visa simular o funcionamento de um semáforo de trânsito em uma via de mão única, com a adição de um botão de solicitação de travessia para pedestres. A principal inovação técnica deste projeto, que o eleva acima de uma simples implementação sequencial, é a utilização do conceito de Máquina de Estados e da função millis() do Arduino.
+O objetivo desta atividade foi realizar a montagem física de um semáforo utilizando LEDs e resistores em uma protoboard. Os LEDs devem representar as cores vermelho, amarelo e verde, seguindo o esquema de um semáforo convencional. Além disso, como "ir além", foi feita a implementação de um botão que simula os botões de semáfaro de pedestre, acelerando a mudança de estado ao fechar o semafaro para a travessia de pedestres.
 
-### 1.1. Programação Não Bloqueante (millis())
+## 2. Metodologia
 
-Em projetos de microcontroladores, a função delay() é frequentemente utilizada para controlar o tempo. No entanto, ela bloqueia a execução do programa, impedindo que o Arduino realize qualquer outra tarefa (como ler o estado de um botão) durante o tempo de espera.
+A atividade foi dividida em duas etapas principais: montagem do circuito e desenvolvimento da lógica de controle.
 
-Para criar um sistema responsivo e interativo, utilizamos a função millis(), que retorna o número de milissegundos desde que a placa Arduino começou a executar o programa atual. Ao invés de parar o código, o programa verifica a diferença entre o tempo atual e o tempo da última mudança de estado.
+### 2.1. Circuito Físico
 
+Foi utilizado um microcontrolador Arduino UNO para controlar três LEDs (vermelho, amarelo e verde) que simulam o semáforo. Um Push Button foi adicionado como dispositivo de entrada para permitir o avanço manual do estado.
 
-"A abordagem não bloqueante é crucial para sistemas que exigem a monitorização contínua de entradas (como sensores ou botões) enquanto executam tarefas baseadas em tempo."
+- Link do vídeo demonstrativo do semáfaro: https://drive.google.com/drive/folders/1GaAipe5WMEKB1amaizIvkqVpxbuep39-?usp=sharing
 
-1.2. Máquina de Estados Finitos (MEF)
+Segue abaixo o circuito desenvolvido:
 
-O semáforo é implementado como uma Máquina de Estados Finitos (MEF). O sistema transita entre três estados principais, definidos por variáveis numéricas:
+<div align="center">
 
-Estado
-Descrição
-Duração Padrão
-0 (Verde)
-Sinal aberto para veículos.
-4 segundos
-1 (Amarelo)
-Sinal de transição, alerta para veículos.
-2 segundos
-2 (Vermelho)
-Sinal fechado para veículos, tempo de travessia para pedestres.
-6 segundos
+<sub>Figura 1: Circuito do Semáforo com Botão de Controle (Online).</sub> 
 
+<img src="circuito-online.png" style=width:100%>
 
-A transição entre os estados é controlada por duas condições: o tempo e a interrupção do botão.
+</div>
 
+<div align="center"> 
 
+<sub>Figura 2: Circuito do Semáforo com Botão de Controle (Offline).</sub> 
+  
+<img src="circuito-offline.png" style=width:100%> 
 
+</div>
 
-2. Hardware: Componentes e Montagem
+Lista de Componentes e Conexões:
 
-O projeto requer o Arduino UNO e componentes básicos de sinalização e entrada.
+| Componente | Conexão no Arduino | Função |
+| :--- | :--- | :--- |
+| LED Vermelho | Pino Digital 10 | Sinalização de parada (Veículos). |
+| LED Amarelo | Pino Digital 9 | Sinalização de atenção (Veículos). |
+| LED Verde | Pino Digital 8 | Sinalização de passagem (Veículos). |
+| Push Button | Pino Digital 12 | Entrada para avanço de estado. |
+| Resistor 10kΩ | Pino Digital 2 para GND | Resistor pull-down para o botão. |
+| Resistor 220Ω | Cátodos dos LEDs para GND | Limitar a corrente e proteger os LEDs. |
 
-2.1. Lista de Componentes
+### 2.2. Lógica de Controle
 
-Componente
-Quantidade
-Função
-Arduino UNO R3
-1
-Microcontrolador central.
-LED Vermelho
-1
-Sinalização de parada (Veículos).
-LED Amarelo
-1
-Sinalização de atenção (Veículos).
-LED Verde
-1
-Sinalização de passagem (Veículos).
-Resistor 220Ω
-3
-Limitar a corrente para os LEDs (proteção).
-Push Button (Botão)
-1
-Entrada para solicitação de pedestre.
-Resistor 10kΩ
-1
-Resistor pull-down para o botão.
-Protoboard
-1
-Placa de ensaio para montagem.
-Jumpers (Fios)
-Vários
-Conexões elétricas.
-
-
-2.2. Diagrama de Circuito e Conexões
-
-O diagrama de circuito (baseado na imagem fornecida) detalha as conexões:
-
-Componente
-Conexão no Arduino
-Tipo de Conexão
-LED Vermelho
-Pino Digital 10
-Saída (OUTPUT)
-LED Amarelo
-Pino Digital 9
-Saída (OUTPUT)
-LED Verde
-Pino Digital 8
-Saída (OUTPUT)
-Cátodos dos LEDs
-GND (via Resistor 220Ω)
-Terra
-Botão de Pedestre
-Pino Digital 2
-Entrada (INPUT)
-Botão de Pedestre
-5V
-Alimentação
-Resistor 10kΩ
-Pino Digital 2 para GND
-Pull-down
-
-
-Lógica do Botão (Pull-down): O resistor de 10kΩ conectado entre o Pino 2 e o GND garante que a leitura do pino seja LOW (0V) quando o botão não está pressionado. Ao pressionar, o pino é conectado diretamente ao 5V, resultando em uma leitura HIGH (5V).
-
-
-
-
-3. Software: Código Fonte Comentado
-
-O código abaixo implementa a Máquina de Estados e a lógica de interrupção não bloqueante.
+O código do microcontrolador, apresentado abaixo, é responsável por gerenciar a transição entre os estados.
 
 C++
-
-
+```
 // --- Portas dos Componentes ---
 const int ledVermelho = 10;
 const int ledAmarelo = 9;
 const int ledVerde = 8;
-const int pinoBotao = 2; // Porta para o botão de pedestre
+const int pinoBotao = 12; // Porta para o botão de pedestre
 
 // --- Variáveis de Controle de Tempo (sem delay) ---
-// Define o tempo que cada estado deve durar em milissegundos
 unsigned long tempoAnterior = 0;
 const long tempoVerde = 4000;   // 4 segundos
 const long tempoAmarelo = 2000; // 2 segundos
@@ -140,19 +72,17 @@ void setup() {
   pinMode(ledVerde, OUTPUT);
   
   // Define o pino do botão como entrada
-  // O resistor pull-down é implementado no circuito físico
   pinMode(pinoBotao, INPUT);
 
-  // Inicia o semáforo no estado verde
+  // Inicia o semáforo no estado verde e liga o "cronômetro"
   digitalWrite(ledVerde, HIGH);
-  tempoAnterior = millis(); // Inicializa o cronômetro
+  tempoAnterior = millis();
 }
 
 void loop() {
-  // 1. LEITURA CONTÍNUA DO BOTÃO
-  // Esta leitura não bloqueia o programa e é executada a cada ciclo do loop
+  // 1. LER O BOTÃO A TODO MOMENTO
+  // Se o botão for pressionado, ativamos nossa "memória"
   if (digitalRead(pinoBotao) == HIGH) {
-    // Se o botão for pressionado, a flag de solicitação é ativada
     botaoPressionado = true;
   }
 
@@ -161,24 +91,21 @@ void loop() {
 
   // 2. MÁQUINA DE ESTADOS DO SEMÁFORO (LÓGICA PRINCIPAL)
   switch (estadoSemaforo) {
-    case 0: // Estado 0: SINAL VERDE (Passagem para veículos)
+    case 0: // Estado 0: SINAL VERDE
       digitalWrite(ledVerde, HIGH);
       digitalWrite(ledAmarelo, LOW);
       digitalWrite(ledVermelho, LOW);
 
       // CONDIÇÃO DE TRANSIÇÃO:
-      // Passa para o amarelo se:
-      // a) O tempo de 4 segundos acabou (ciclo automático)
-      // OU
-      // b) O botão foi pressionado (interrupção do pedestre)
+      // Passa para o amarelo se o tempo do verde acabou OU se o botão foi pressionado.
       if (tempoAtual - tempoAnterior >= tempoVerde || botaoPressionado) {
         estadoSemaforo = 1; // Vai para o amarelo
-        tempoAnterior = tempoAtual; // Reinicia o cronômetro para o próximo estado
-        botaoPressionado = false; // Reseta a flag de solicitação do pedestre
+        tempoAnterior = tempoAtual; // Reinicia o cronômetro
+        botaoPressionado = false; // "Esquece" o clique, pois já atendemos ao pedido
       }
       break;
 
-    case 1: // Estado 1: SINAL AMARELO (Alerta de transição)
+    case 1: // Estado 1: SINAL AMARELO
       digitalWrite(ledVerde, LOW);
       digitalWrite(ledAmarelo, HIGH);
       digitalWrite(ledVermelho, LOW);
@@ -191,13 +118,13 @@ void loop() {
       }
       break;
 
-    case 2: // Estado 2: SINAL VERMELHO (Parada de veículos / Travessia de pedestres)
+    case 2: // Estado 2: SINAL VERMELHO
       digitalWrite(ledVerde, LOW);
       digitalWrite(ledAmarelo, LOW);
       digitalWrite(ledVermelho, HIGH);
 
       // CONDIÇÃO DE TRANSIÇÃO:
-      // Se passaram 6 segundos no vermelho, volta para o verde e reinicia o ciclo
+      // Se passaram 6 segundos no vermelho, volta para o verde
       if (tempoAtual - tempoAnterior >= tempoVermelho) {
         estadoSemaforo = 0; // Volta para o verde
         tempoAnterior = tempoAtual; // Reinicia o cronômetro
@@ -205,34 +132,40 @@ void loop() {
       break;
   }
 }
+```
+
+## 3. Estados do Sistema
+
+O sistema opera em um ciclo contínuo de três estados. A tabela abaixo resume os estados e os eventos que causam a transição.
+
+| Estado (estadoSemaforo) | LED Ligado | Duração Padrão | Condição de Transição |
+| :--- | :--- | :--- | :--- |
+| 0 (Verde) | LED Verde | 4000 ms | Tempo expirado OU Botão Pressionado |
+| 1 (Amarelo) | LED Amarelo | 2000 ms | Tempo expirado OU Botão Pressionado |
+| 2 (Vermelho) | LED Vermelho | 6000 ms | Tempo expirado OU Botão Pressionado |
+
+## 4. Resultados
+
+A implementação da lógica de avanço de estado resultou em um sistema de semáforo com dupla funcionalidade:
+
+1. Ciclo Automático Robusto: O semáforo realiza o ciclo Verde (4s) -> Amarelo (2s) -> Vermelho (6s) de forma autônoma, utilizando a função millis() para garantir que o programa não seja bloqueado.
+
+2. Controle Manual de Avanço: O botão de controle funciona como um disparador de transição. A cada clique:
+
+• O estado atual é imediatamente finalizado.
+
+• O semáforo avança para o próximo estado no ciclo 
+
+• O cronômetro de tempo para o novo estado é resetado pela função mudarEstado().
+
+## 5. Feedbacks (Samuel Vono)
+
+Parabéns, seu projeto está excelente e recebe uma nota 9/10. A documentação está muito clara e profissional. O grande destaque técnico é o uso correto da função millis() em vez de delay(), criando uma máquina de estados robusta (switch-case) que permite a leitura do botão de forma responsiva. A implementação do botão de pedestre como "ir além" foi uma ótima escolha e a lógica da "memória" do botão (botaoPressionado) foi muito inteligente.
+
+A principal sugestão para o 10/10 é um pequeno refinamento: no código atual, se o pedestre apertar o botão durante o sinal vermelho, o próximo sinal verde será pulado instantaneamente. Para corrigir isso, simplesmente mova a lógica de leitura do botão (if (digitalRead(pinoBotao) == HIGH)) para dentro do case 0 (o estado verde). 
 
 
 
 
 
-4. Lógica de Funcionamento e Interrupção
-
-O coração do projeto reside na lógica de transição do estado Verde (0).
-
-1.
-Ciclo Automático: O semáforo permanece no estado Verde por 4 segundos. Após esse período, a condição tempoAtual - tempoAnterior >= tempoVerde se torna verdadeira, e a transição para o estado Amarelo (1) é iniciada.
-
-2.
-Interrupção por Pedestre: Se o botão for pressionado, a variável botaoPressionado é definida como true. A condição de transição no estado Verde se torna verdadeira (... || botaoPressionado), forçando a mudança imediata para o estado Amarelo, independentemente do tempo restante do ciclo Verde.
-
-3.
-Segurança e Fluidez:
-
-•
-Se o botão for pressionado durante o Amarelo ou Vermelho, a solicitação é registrada (botaoPressionado = true).
-
-•
-Quando o ciclo retorna ao Verde, a solicitação registrada força a transição imediata para o Amarelo, garantindo que o pedestre seja atendido o mais rápido possível no próximo ciclo.
-
-•
-A flag botaoPressionado é resetada (false) logo após ser utilizada para iniciar a transição, preparando o sistema para a próxima solicitação.
-
-
-
-Esta implementação demonstra um entendimento avançado de programação de microcontroladores, combinando o controle de tempo preciso com a capacidade de resposta a eventos externos.
 
