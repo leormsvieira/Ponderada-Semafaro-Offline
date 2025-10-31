@@ -20,7 +20,7 @@ Segue abaixo o circuito desenvolvido:
 
 <sub>Figura 1: Circuito do Semáforo com Botão de Controle (Online).</sub> 
 
-<img src="circuito-online.png" style=width:100%>
+<img src="Captura de tela 2025-10-30 172551.png" style=width:100%>
 
 </div>
 
