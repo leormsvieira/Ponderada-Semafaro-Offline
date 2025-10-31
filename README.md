@@ -28,7 +28,7 @@ Segue abaixo o circuito desenvolvido:
 
 <sub>Figura 2: Circuito do Semáforo com Botão de Controle (Offline).</sub> 
   
-<img src="circuito-offline.png" style=width:100%> 
+<img src="Imagem do WhatsApp de 2025-10-30 à(s) 20.23.25_57477aea.jpg" style=width:100%> 
 
 </div>
 
