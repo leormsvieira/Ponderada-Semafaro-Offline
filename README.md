@@ -32,7 +32,8 @@ Segue abaixo o circuito desenvolvido:
 
 </div>
 
-Lista de Componentes e Conexões:
+
+### Lista de Componentes e Conexões:
 
 | Componente | Conexão no Arduino | Função |
 | :--- | :--- | :--- |
