@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-O objetivo desta atividade foi realizar a montagem física de um semáforo utilizando LEDs e resistores em uma protoboard. Os LEDs devem representar as cores vermelho, amarelo e verde, seguindo o esquema de um semáforo convencional. Além disso, como "ir além", foi feita a implementação de um botão que simula os botões de semáfaro de pedestre, acelerando a mudança de estado ao fechar o semafaro para a travessia de pedestres.
+O objetivo desta atividade foi realizar a montagem física de um semáforo utilizando LEDs e resistores em uma protoboard. Os LEDs devem representar as cores vermelho, amarelo e verde, seguindo o esquema de um semáforo convencional. Além disso, como "ir além", foi feita a implementação de um botão que simula os botões de semáfaro de pedestre, acelerando a mudança de estado ao fechar o semáfaro para a travessia de pedestres.
 
 ## 2. Metodologia
 
